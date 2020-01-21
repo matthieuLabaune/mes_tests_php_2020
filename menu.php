@@ -18,3 +18,4 @@ HTML;
 
 <?= nav_item('/index.php', 'Accueil', $class); ?>
 <?= nav_item('/contact.php', 'Contact', $class); ?>
+<?= nav_item('/contact-2.php', 'Contact 2', $class); ?>
