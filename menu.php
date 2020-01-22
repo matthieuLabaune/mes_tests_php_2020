@@ -19,3 +19,4 @@ HTML;
 <?= nav_item('/index.php', 'Accueil', $class); ?>
 <?= nav_item('/contact.php', 'Contact', $class); ?>
 <?= nav_item('/contact-2.php', 'Contact 2', $class); ?>
+<?= nav_item('/contact-3.php', 'Contact 3', $class); ?>
