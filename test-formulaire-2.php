@@ -38,7 +38,7 @@ if (isset($valider)) {
 </head>
 <body>
 <?php echo $message ?>
-<form name="formulaire" method="post" action="Test-formulaire-2.php">
+<form name="formulaire" method="post" action="test-formulaire-2.php">
     <div class="label">Civilité</div>
     <input type="radio" name="civilite" value="<?php if ($civilite == "M.") echo "selected"; ?>"/>Mr</label>
     <input type="radio" name="civilite" value="<?php if ($civilite == "Mme.") echo "selected"; ?>"/>Mme</label>

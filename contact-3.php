@@ -1,11 +1,12 @@
 <?php
-//https://www.pierre-giraud.com/php-mysql-apprendre-coder-cours/utilisation-filtre/
-//http://sdz.tdct.org/sdz/les-filtres-en-php-pour-valider-les-donnees-utilisateur.html
-
 //-------- DEBUT LOGIQUE ---------
 $message_success = null;
 $message_form_empty = null;
 $messageErreur = null;
+$messageSuccess_fichier_joint = null;
+$messageErreur_fichier_joint = null;
+$uploaddir = '/var/www/html/public/MesProjetPHP/Test/storage/';
+$uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 
 //tableau d'option pour chaque index du tableau $_POST
 $options_filtres = [
@@ -20,6 +21,7 @@ $options_filtres = [
         "options" => "ucwords"
     ],
     'email' => FILTER_VALIDATE_EMAIL,
+
     'message' => [
         "filter" => FILTER_CALLBACK,
         "flags" => FILTER_FORCE_ARRAY,
@@ -43,11 +45,15 @@ if ($reponse_formulaire != null) { //Si le formulaire a bien été posté.
             $nbrErreurs++;
         }
     }
-    if ($nbrErreurs == 0) {//Si le formulaire ne comporte pas d'erreurs on affiche le msg ci-dessous
+    if (empty($_FILES['userfile'])){
+        $messageErreur_fichier_joint = "Aucun fichier jointn";
+    }
+    if ($nbrErreurs == 0 && move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {//Si le formulaire ne comporte pas d'erreurs on affiche le msg ci-dessous
         $message_success = 'Bonjour ' . $reponse_formulaire['prenom'] . ' ' . $reponse_formulaire['nom'] . ' et merci pour votre message : "<em>' . $reponse_formulaire['message'] . '</em>". </br> Nous vous recontacterons dans les plus brefs délais à l\'adresse email ' . $reponse_formulaire['email'] . ' <br/> A bientôt. <br/> L\'équipe du site moncv.fr';
         //Envoyer les données filtrées dans un fichier texte "reponses formulaire"
         $file = __DIR__ . DIRECTORY_SEPARATOR . 'formulaire' . DIRECTORY_SEPARATOR . reponse_formulaire . '.txt';
         file_put_contents($file, implode(PHP_EOL, $reponse_formulaire) . PHP_EOL);
+        $messageSuccess_fichier_joint = "Merci d'avoir joint un fichier pour préciser votre demande.\n";
     }
 } else {//SI le formulaire n'a pas été posté...
     $message_form_empty = "Vous devez compléter tous les champs du formulaire";
@@ -59,11 +65,8 @@ if ($reponse_formulaire != null) { //Si le formulaire a bien été posté.
 <!-------------------------------------------------------------------------------------------- --->
 <h1>Formulaire de contact</h1>
 <!-------------------------------------------------------------------------------------------- --->
-<hr>
-<!-------------------------------------------------------------------------------------------- --->
-<!-------------------------------------------------------------------------------------------- --->
 <!-- DEBUT FORMULAIRE -->
-<form action="contact-3.php" method="post" class="form-group">
+<form action="contact-3.php" method="post" class="form-group" enctype="multipart/form-data">
     <div class="label">Nom</div>
     <input type="text" name="nom" placeholder="entrez votre nom"
            value="<?= htmlentities($reponse_formulaire['nom']) ?>"/>
@@ -77,22 +80,37 @@ if ($reponse_formulaire != null) { //Si le formulaire a bien été posté.
     <textarea name="message" placeholder="Précisez votre demande ici"
               value=" <?= htmlentities($reponse_formulaire['message']) ?> "
               rows="5"
-              cols="40"></textarea>
-    <button type="submit" class="btn btn-secondary">Valider</button>
+              cols="40"></textarea></br>
+    <!-- MAX_FILE_SIZE doit précéder le champ input de type file -->
+    <input type="hidden" name="MAX_FILE_SIZE" value="30000"/>
+    <input name="userfile" type="file"/>
+    <!-- Le nom de l'élément input détermine le nom dans le tableau $_FILES -->
+    </br>
+    </br>
+    <button type="submit" class="btn btn-secondary">Valider la formulaire</button>
 </form>
-
-<hr><!-- Ici sont affichés les messages concernant la validation du formulaire et les erreurs-->
+<!-- Ici sont affichés les messages concernant la validation du formulaire et les erreurs-->
 <div class="text text-success"><?= $message_success ?></div>
 <div class="text text-primary"><?= $message_form_empty ?></div>
-<?php if ($messageErreur): ?><div class="text text-danger"><?= $messageErreur ?></div><?php endif ?>
+<?php if ($messageErreur): ?>
+    <div class="text text-danger"><?= $messageErreur ?></div><?php endif ?>
+<div class="text text-success"><?= $messageSuccess_fichier_joint ?></div>
+<div class="text text-danger"><?= $messageErreur_fichier_joint ?></div>
+<hr>
+<!-- FIN affichage messages erreurs  -->
 
-<hr><!-- FIN affichage messages erreurs-->
 
-<h2>Contenu formulaire ici</h2>-->
+<!--<h2>Contenu formulaire ici</h2>-->
 
 <?php
 
+
 /*
+ *
+ * echo 'Voici quelques informations de débogage :';
+print_r($_FILES);
+
+
 <pre>
     <?php var_dump($valeur) ?>
 </pre>

@@ -54,7 +54,7 @@ $page = [
     <div class="container mt-5">
         <h1>Me Contacter</h1>
 
-        <form action="test-formulaire.php" method="post">
+        <form action="test-formulaire-1.php" method="post">
             Civilité
             <label><input type="radio" name="civilite" value="Mr"/> Mr </label>
             <label> <input type="radio" name="civilite" value="Mme"/>Mme</label><br/>
